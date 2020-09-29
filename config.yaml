@@ -1,0 +1,152 @@
+---
+old_index_pattern: 'logstash-*'
+new_index_pattern: 'ecs-*'
+
+wildcard_fields:
+  - container.labels
+  - http.request.headers
+  - http.response.headers
+  - labels
+
+ignore_fields:
+  - logType
+  - longMsg
+  - bgp_status
+  - bgp_status.raw
+  - res_body_error_cause_code
+  - res_body_err_name
+  - res_body_error
+  - fatal_exception.file
+  - root_req_headers_x-request-class.raw
+  - root_req_headers_user-agent.raw
+  - root_req_uri.raw
+  - job_writer
+  - job_id
+  - status_0
+  - status_1
+  - status_2
+  - status_3
+  - fatal_exception.file.raw
+  - interface_name
+  - network_transport
+  - network_transport.raw
+  - messageKey
+  - messageKey.raw
+  - backtrace.function.raw
+  - peer_ip.raw
+  - peer_asn.raw
+  - origin
+  - _source  # Some dashboards list _source as tabular data
+  - bool  # Custom filter queries using bool consider the filter key to be "bool".  (One dashboard.)
+  - wildcard # Custom filter queries using wildcard consider the filter key to be "wildcard".  (One dashboard.)
+  - request-X-Seven
+  - response-Content-Length
+  - response-X-Cache-Int
+  - geo.name
+
+field_mapping:
+  # ecs field: [ list of legacy field names ]
+  '@timestamp': ['time']
+  client.ip: ['clientip', 'c_ip', 'http.client_ip']
+  kubernetes.namespace.name: ['kubernetes.namespace_name']
+  csp.blocked_url: ['csp-report.blocked-uri']
+  csp.effective_directive: ['csp-report.effective-directive']
+  destination.ip: ['destination_ip', 'dst-ip']
+  destination.port: ['destination_port', 'dst-port', 'dest_port']
+  error.message: ['exception.message', 'fatal_exception.message', 'error', 'exception']
+  error.previous_message: ['exception.previous.message']
+  error.stack_trace: ['stack_trace', 'exception.trace']
+  error.type: ['exception.class', 'error_class']
+  event.action: ['action', 'event_action', 'job_type', 'event']
+  event.dataset: ['measure']
+  event.duration: ['durationSeconds', 'time_firstbyte', 'request_time', 'time-apache-delay']  # TODO: convert to nanoseconds
+  event.outcome: ['status', 'icinga_state', 'transition']
+  geo.name: ['geocookie']
+  host.ip: ['ip', 'source_host']
+  host.name: ['host', 'icinga_host']
+  http.request.headers.content_type: ['request.headers.content-type']
+  http.request.method: ['http_method']
+  http.request.referrer: ['referer', 'referrer']
+  http.response.headers.x_cache: ['x_cache']
+  http.response.headers.x_cache_status: ['cache_status']
+  http.response.headers.x_powered_by: ['response-X-Powered-By']
+  http.response.status_code: ['http_status', 'http-status']
+  labels.backend: ['backend']  # "backend" comes from webrequest and could mean the program (envoy, Varnish, nginx/VER), or the server.address
+  labels.backendclose: ['backendclose']
+  labels.channel: ['channel', 'meta.stream']
+  labels.cluster: ['cluster', 'servergroup']
+  # MediaWiki: appears to be a status HTTP status code response from objectcache and FileOperation,
+  # but a textual status (uncacheable, store_error) from StashEdit
+  labels.code: ['code']
+  # TODO: make a database or mediawiki top-level path?
+  labels.db_query: ['query']
+  labels.db_server: ['db_server']
+  labels.db_shard: ['shard']
+  labels.emitter: ['emitter_id']
+  labels.from_zone: ['from-zone']
+  labels.heap_total: ['memoryUsage_heapTotal']
+  labels.heap_used: ['memoryUsage_heapUsed']
+  labels.rss: ['memoryUsage_rss']
+  labels.httpgarbage: ['httpgarbage']
+  labels.icinga_notif_cmd: ['icinga_notif_cmd']
+  labels.layer: ['layer']
+  labels.levelPath: ['levelPath', 'err_levelPath', 'err.levelPath']
+  labels.limiter_key: ['limiter_key']
+  labels.memcached_key: ['memcached-key']
+  labels.oldId: ['oldId']
+  labels.phpversion: ['phpversion'] # TODO: make a php top-level path?
+  labels.protocol_id: ['protocol-id']
+  labels.schema: ['schema', 'event_schema', 'event.schema']
+  labels.source: ['source']
+  labels.sql1line: ['sql1line']
+  labels.stream: ['errored_stream_name']
+  labels.schema_uri: ['errored_schema_uri']
+  labels.throttle: ['throttle']
+  labels.time_fetch: ['time-fetch']
+  labels.time_process: ['time-process']
+  labels.time_req: ['time-req']
+  labels.time_reqbody: ['time-reqbody']
+  labels.time_resp: ['time-resp']
+  labels.time_waitinglist: ['time-waitinglist']
+  labels.title: ['title']
+  labels.to_zone: ['to-zone']
+  labels.wiki: ['wiki']
+  log.level: ['level', 'levelname']
+  log.logger: ['logger_name', 'LoggerName', 'loggingMethod', 'fname', 'constraintCheckerClassShortName', 'constraintCheckerClass', 'SourceClassName']
+  log.origin.file.name: ['exception.file', 'script']
+  log.syslog.facility.name: ['facility']
+  message: ['normalized_message', 'msg', 'fetcherror', 'icinga_check_descr', 'icinga_message']
+  network.transport: ['protocol']
+  network.direction: ['direction']
+  process.args: ['cli_argv']
+  server.address: ['response-server', 'response-Server', 'redis_server', 'origin_server']
+  service.type: ['_type', 'type', 'program', 'appname', 'kubernetes.labels.app']
+  service.version: ['mwversion']
+  source.ip: ['source_ip', 'src-ip', 'req_remoteHost', 'ipKey']
+  source.port: ['src-port', 'source_port']
+  url.domain: ['meta.domain', 'server', 'uri_host', 'request-Host']
+  url.full: ['file_url', 'uri', 'page']
+  url.path: ['root_req_uri', 'exception_url', 'uri_path', 'http_request', 'csp-report.document-uri', 'http-url']
+  url.query: ['feature']
+  user.name: ['user', 'icinga_contact', 'username', 'ssh_username']
+  user_agent.original: ['http.request_headers.user-agent', 'user_agent', 'user-agent', 'agent', 'userAgent', 'ua', 'req_userAgent']
+
+
+# TODO: `url` field must be handled case-by-case since url could mean the full url, or just the url path
+#   `type:network-error`    = FULL URL
+#   `type:clienterror`      = FULL URL
+#   `type:mediawiki`        = URL PATH
+#   `type:logback`          = URL PATH
+#   `type:syslog`           = URL PATH
+#   `type:parsoid-tests`    = URL PATH
+#   `type:wikibase-termbox` = URL PATH
+
+# TODO: `hostname` field must be handled case-by-case since k8s does something different
+#    `host:kube*`              = CONTAINER POD NAME
+#    `name:recommendation_api` = host.name
+
+# TODO: `name` fieldcould mean service.type in k8s, or user.name in mediawiki, or log.logger in mjolnir-kafka-bulk-daemon
+#    `type:mediawiki` = user.name
+#    `host:kube*`     = service.type
+#    `(type:internal_error OR type:internal_http_error OR type:internal_server_error)` = service.type
+#    `(program:mjolnir-kafka-bulk-daemon OR program:mjolnir-kafka-msearch-daemon)`     = log.logger
